@@ -1,6 +1,20 @@
 @ChessAPIServer_HostAddress = http://localhost:5043
 
-GET {{ChessAPIServer_HostAddress}}/weatherforecast/
-Accept: application/json
+GET {{ChessAPIServer_HostAddress}}/HelloGet
+Content-Type: application/json
 
+
+POST {{{{ChessAPIServer_HostAddress}}}}/HelloPost
+Content-Type: application/json
+{
+    "text" : "testTextValue"
+}
+
+POST {{ChessAPIServer_HostAddress}}/Login
+Content-Type: application/json
+{
+    "PlayerID":"testid1234",
+    "PW":"testpassword123",
+    "NickName":"tester",
+}
 ###
