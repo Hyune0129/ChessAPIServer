@@ -1,4 +1,5 @@
 using System.Text.Json;
+using APIServer.DTO;
 using APIServer.Models;
 using APIServer.Repository.Interfaces;
 
@@ -42,9 +43,33 @@ public class CheckUserAuthAndLoadUserData
             return;
         }
 
+        // not data with uid key
         (bool isOk, RdbAuthUserData userInfo) = await _memoryDb.GetUserAsync(uid);
+        if (await IsInvalidUserAuthTokenNotFound(context, isOk))
+        {
+            return;
+        }
+
+        if (await IsInvalidUserAuthTokenThenSendError(context, userInfo, token))
+        {
+            return;
+        }
+
+        // redis key lock check
+        var userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
+        if (await SetLockAndIsFailThenSendError(context, userLockKey))
+        {
+            return;
+        }
 
 
+        context.Items[nameof(RdbAuthUserData)] = userInfo;
+
+        // call next middleware
+        await _next(context);
+
+        // unlock transaction key
+        await _memoryDb.UnLockUserReqAsync(userLockKey);
     }
 
     async Task<(bool, string)> IsTokenNotExistOrReturnToken(HttpContext context)
@@ -57,7 +82,7 @@ public class CheckUserAuthAndLoadUserData
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
-            result = ErrorCode.TokenDoesNotExist
+            Result = ErrorCode.TokenDoesNotExist
         });
 
         await context.Response.WriteAsync(errorJsonResponse);
@@ -75,10 +100,26 @@ public class CheckUserAuthAndLoadUserData
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
-            result = ErrorCode.UidDoesNotExist
+            Result = ErrorCode.UidDoesNotExist
         });
         await context.Response.WriteAsJsonAsync(errorJsonResponse);
         return (true, "");
+    }
+
+    async Task<bool> SetLockAndIsFailThenSendError(HttpContext context, string authToken)
+    {
+        if (await _memoryDb.LockUserReqAsync(authToken))
+        {
+            return false;
+        }
+
+        context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+        {
+            Result = ErrorCode.AuthTokenFailSetNx
+        });
+        await context.Response.WriteAsJsonAsync(errorJsonResponse);
+        return true;
     }
 
     async Task<bool> IsInvalidUserAuthTokenThenSendError(HttpContext context, RdbAuthUserData userInfo, string token)
@@ -91,7 +132,7 @@ public class CheckUserAuthAndLoadUserData
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
         {
-            result = ErrorCode.AuthTokenFailWrongAuthToken
+            Result = ErrorCode.AuthTokenFailWrongAuthToken
         });
         await context.Response.WriteAsJsonAsync(errorJsonResponse);
 
@@ -99,8 +140,16 @@ public class CheckUserAuthAndLoadUserData
     }
 
     async Task<bool> IsInvalidUserAuthTokenNotFound(HttpContext context, bool isOk)
-    class MiddlewareResponse
     {
-        public ErrorCode result { get; set; }
+        if (!isOk)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            var errorJsonResponse = JsonSerializer.Serialize(new MiddlewareResponse
+            {
+                Result = ErrorCode.AuthTokenKeyNotFound
+            });
+            await context.Response.WriteAsJsonAsync(errorJsonResponse);
+        }
+        return !isOk;
     }
 }
