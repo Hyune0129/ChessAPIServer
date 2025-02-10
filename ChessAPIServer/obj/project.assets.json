@@ -18,6 +18,32 @@
           }
         }
       },
+      "Dapper/2.0.123": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Dapper.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/Dapper.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Humanizer.Core/2.8.26": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Humanizer.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Humanizer.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
         "type": "package",
         "build": {
@@ -184,6 +210,29 @@
           "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
             "related": ".xml"
           }
+        }
+      },
+      "SqlKata/4.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/SqlKata.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/SqlKata.Core.dll": {}
+        }
+      },
+      "SqlKata.Execution/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Humanizer.Core": "2.8.26",
+          "SqlKata": "4.0.1",
+          "dapper": "2.0.123"
+        },
+        "compile": {
+          "lib/net8.0/SqlKata.Execution.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/SqlKata.Execution.dll": {}
         }
       },
       "StackExchange.Redis/2.7.33": {
@@ -368,6 +417,40 @@
         "lib/netstandard2.0/CloudStructures.xml",
         "lib/netstandard2.1/CloudStructures.dll",
         "lib/netstandard2.1/CloudStructures.xml"
+      ]
+    },
+    "Dapper/2.0.123": {
+      "sha512": "RDFF4rBLLmbpi6pwkY7q/M6UXHRJEOerplDGE5jwEkP/JGJnBauAClYavNKJPW1yOTWRPIyfj4is3EaJxQXILQ==",
+      "type": "package",
+      "path": "dapper/2.0.123",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Dapper.png",
+        "dapper.2.0.123.nupkg.sha512",
+        "dapper.nuspec",
+        "lib/net461/Dapper.dll",
+        "lib/net461/Dapper.xml",
+        "lib/net5.0/Dapper.dll",
+        "lib/net5.0/Dapper.xml",
+        "lib/netstandard2.0/Dapper.dll",
+        "lib/netstandard2.0/Dapper.xml"
+      ]
+    },
+    "Humanizer.Core/2.8.26": {
+      "sha512": "OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A==",
+      "type": "package",
+      "path": "humanizer.core/2.8.26",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "humanizer.core.2.8.26.nupkg.sha512",
+        "humanizer.core.nuspec",
+        "lib/netstandard1.0/Humanizer.dll",
+        "lib/netstandard1.0/Humanizer.xml",
+        "lib/netstandard2.0/Humanizer.dll",
+        "lib/netstandard2.0/Humanizer.xml",
+        "logo.png"
       ]
     },
     "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
@@ -916,6 +999,30 @@
         "pipelines.sockets.unofficial.nuspec"
       ]
     },
+    "SqlKata/4.0.1": {
+      "sha512": "uGGSjc5tHMQCTy17EZxXr74ty4P79rjtuiPWT2VsZQ8v+K6uoLaTyW050ezU3VRBmaL00b5+x0+6OfjA3l9USA==",
+      "type": "package",
+      "path": "sqlkata/4.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net8.0/SqlKata.Core.dll",
+        "sqlkata.4.0.1.nupkg.sha512",
+        "sqlkata.nuspec"
+      ]
+    },
+    "SqlKata.Execution/4.0.1": {
+      "sha512": "pFQg2Jn6sKtrDJyQBAYFvJQr7o5uB1rlUtOqxmLYkfPeAx6Nx8MFU1WyqE6LzYkVG6fKH2sNgG9VXl6EOKavPA==",
+      "type": "package",
+      "path": "sqlkata.execution/4.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net8.0/SqlKata.Execution.dll",
+        "sqlkata.execution.4.0.1.nupkg.sha512",
+        "sqlkata.execution.nuspec"
+      ]
+    },
     "StackExchange.Redis/2.7.33": {
       "sha512": "2kCX5fvhEE824a4Ab5Imyi8DRuGuTxyklXV01kegkRpsWJcPmO6+GAQ+HegKxvXAxlXZ8yaRspvWJ8t3mMClfQ==",
       "type": "package",
@@ -1152,6 +1259,8 @@
     "net8.0": [
       "CloudStructures >= 3.3.0",
       "MySqlConnector >= 2.4.0",
+      "SqlKata >= 4.0.1",
+      "SqlKata.Execution >= 4.0.1",
       "Swashbuckle.AspNetCore >= 6.4.0",
       "ZLogger >= 2.5.9"
     ]
@@ -1205,6 +1314,14 @@
           "MySqlConnector": {
             "target": "Package",
             "version": "[2.4.0, )"
+          },
+          "SqlKata": {
+            "target": "Package",
+            "version": "[4.0.1, )"
+          },
+          "SqlKata.Execution": {
+            "target": "Package",
+            "version": "[4.0.1, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

@@ -139,6 +139,7 @@ public enum ErrorCode : UInt16
     GetOtherUserInfoFailException = 6005,
     UserNotExist = 6006,
 
+
     // Mail
     MailListFailException = 8001,
     MailReceiveFailException = 8002,

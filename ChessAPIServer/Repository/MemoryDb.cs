@@ -118,6 +118,85 @@ public class MemoryDb : IMemoryDb
         }
     }
 
+    /// <summary>
+    /// use in transaction lock
+    /// </summary>
+    public async Task<bool> LockUserReqAsync(string key)
+    {
+        try
+        {
+            RedisString<RdbAuthUserData> redis = new(_redisConn, key, NxKeyTimeSpan());
+            if (await redis.SetAsync(new RdbAuthUserData
+            {
+                //empty
+            }, NxKeyTimeSpan(), StackExchange.Redis.When.NotExists) == false)
+            {
+                return false;
+            }
+
+
+        }
+        catch
+        {
+            _logger.ZLogError($"[SetUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// use in transaction unlock
+    /// </summary>
+    public async Task<bool> UnLockUserReqAsync(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            return false;
+        }
+
+        try
+        {
+            RedisString<RdbAuthUserData> redis = new(_redisConn, key, null);
+            var redisResult = await redis.DeleteAsync();
+            return redisResult;
+        }
+        catch
+        {
+            _logger.ZLogError($"[DelUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>
+    /// bool | true : playing game, false : not playing game
+    /// int  | return playing room number if not playing, return -1;
+    /// </returns>
+
+    public async Task<(bool, int)> GetRoomNumber(string uid)
+    {
+        var key = MemoryDbKeyMaker.MakeUIDKey(uid);
+        try
+        {
+            RedisString<int> redis = new(_redisConn, key, null);
+            RedisResult<int> num = await redis.GetAsync();
+            if (!num.HasValue)
+            {
+                _logger.ZLogError($"[GetRommNumber] key = {key}, ErrorMessage : Not Find Matched RoomNumber, Get RoomNumber Error");
+            }
+
+            return (true, num.Value);
+        }
+        catch
+        {
+            _logger.ZLogError($"[GetRoomNumber] Key = {key}, ErrorMessage: RedisConnection Error");
+            return (false, -1);
+        }
+    }
+
     public TimeSpan LoginTimeSpan()
     {
         return TimeSpan.FromMinutes(RediskeyExpireTime.LoginKeyExpireMin);

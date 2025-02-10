@@ -11,7 +11,7 @@ namespace APIServer.Controllers.Friend;
 public class FriendList : ControllerBase
 {
     readonly ILogger<FriendList> _logger;
-    readonly IFriendService _friendService
+    readonly IFriendService _friendService;
 
 
     public FriendList(ILogger<FriendList> logger, IFriendService friendService)
