@@ -1,3 +1,4 @@
+using APIServer.Model;
 using APIServer.Model.DTO;
 using APIServer.Repository;
 using APIServer.Utils;
@@ -26,7 +27,12 @@ public class LoginAccount : ControllerBase
     {
         LoginAccountResponse response = new();
         (response.Result, response.UserID) = await _loginDb.VerifyUser(request.UserID, request.Password);
-        _logger.ZLogInformation($"[Login] UserId : {request.UserID}");
+        if (response.Result == ErrorCode.LoginFailPwNotMatch)
+        {
+            _logger.ZLogDebug($"[LoginAccount] ErrorCode : {ErrorCode.LoginFailPwNotMatch}");
+            return response;
+        }
+        _logger.ZLogInformation($"[Login] UserID : {request.UserID}");
         response.Token = Security.MakeHashingToken(_saltValue, response.UserID);
         return response;
 
