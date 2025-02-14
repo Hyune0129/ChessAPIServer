@@ -3,6 +3,7 @@ using APIServer.Models;
 using APIServer.Repository.Interfaces;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
+using SqlKata.Compilers;
 using SqlKata.Execution;
 using ZLogger;
 
@@ -12,7 +13,7 @@ public class MasterDb : IMasterDb
 {
     readonly IOptions<DbConfig> _dbConfig;
     readonly ILogger<MasterDb> _logger;
-    readonly SqlKata.Compilers.MySqlCompiler _compiler;
+    readonly MySqlCompiler _compiler;
     IDbConnection _dbConn;
     readonly IGameDb _gameDb;
     readonly IMemoryDb _memoryDb;
@@ -28,7 +29,7 @@ public class MasterDb : IMasterDb
 
         Open();
 
-        _compiler = new SqlKata.Compilers.MySqlCompiler();
+        _compiler = new MySqlCompiler();
         _queryFactory = new QueryFactory(_dbConn, _compiler);
         _memoryDb = memoryDb;
         _gameDb = gameDb;

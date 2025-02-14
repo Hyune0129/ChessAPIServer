@@ -52,17 +52,14 @@ public enum ErrorCode : UInt16
     FriendSendReqFailInsert = 2102,
     FriendSendReqFailException = 2103,
     FriendSendReqFailAlreadyExist = 2104,
-    SendFriendReqFailSameUid = 2105,
+    FriendSendReqFailSameUid = 2105,
     FriendGetListFailOrderby = 2106,
     FriendGetListFailException = 2107,
     FriendGetRequestListFailException = 2108,
     FriendDeleteFailNotFriend = 2109,
-    FriendDeleteFailDelete = 2110,
+    FriendDeleteFailUserNotExist = 2110,
     FriendDeleteFailException = 2111,
     FriendDeleteFailSameUid = 2112,
-    FriendDeleteReqFailNotFriend = 2113,
-    FriendDeleteReqFailDelete = 2114,
-    FriendDeleteReqFailException = 2115,
     FriendAcceptFailException = 2116,
     FriendAcceptFailSameUid = 2117,
     AcceptFriendRequestFailUserNotExist = 2118,
@@ -124,7 +121,9 @@ public enum ErrorCode : UInt16
 
 
     //GameDb 4000~ 
+    GameDB_Fail_LoadData = 4001,
     GetGameDbConnectionFail = 4002,
+
 
 
     // MasterDb 5000 ~

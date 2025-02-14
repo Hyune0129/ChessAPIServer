@@ -30,27 +30,6 @@ public class AuthService : IAuthService
     /// lastlogin time update
     /// if new user response ErrorCode 2005
     /// </summary>
-    public async Task<ErrorCode> Login(long userid, string token)
-    {
-        ErrorCode errorCode = await VerifyUser(userid);
-        if (errorCode != ErrorCode.None)
-        {
-            return errorCode;
-        }
-        errorCode = await VerifyTokenToLoginServer(userid, token);
-        if (errorCode != ErrorCode.None)
-        {
-            return errorCode;
-        }
-        errorCode = await UpdateLastLoginTime(userid);
-        if (errorCode != ErrorCode.None)
-        {
-            return errorCode;
-        }
-
-        return ErrorCode.None;
-    }
-
     public async Task<ErrorCode> VerifyTokenToLoginServer(long uid, string token)
     {
         try
@@ -120,9 +99,14 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<(ErrorCode, string)> RegisterToken(long uid)
+    /// <summary>
+    /// register user's token in memorydb(redis)
+    /// </summary>
+    public async Task<ErrorCode> RegisterToken(long uid, string token)
     {
-        throw new NotImplementedException();
+
+        ErrorCode errorCode = await _memoryDb.RegisterUserAuthAsync(token, uid);
+        return errorCode;
     }
 
     bool ValidateLoginServerResponse(HttpResponseMessage? response)

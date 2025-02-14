@@ -29,6 +29,15 @@ public class CheckUserAuthAndLoadUserData
             return;
         }
 
+        // hello controller check
+        // todo : delete it if released
+        if (string.Compare(formString, "/hello", StringComparison.OrdinalIgnoreCase) == 0)
+        {
+            await _next(context);
+
+            return;
+        }
+
         //have token?
         var (isTokenNotExist, token) = await IsTokenNotExistOrReturnToken(context);
         if (isTokenNotExist)

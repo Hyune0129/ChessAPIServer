@@ -2,6 +2,7 @@ using APIServer.DTO;
 using APIServer.DTO.Auth;
 using APIServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using ZLogger;
 
 namespace APIServer.Controllers.Auth;
@@ -18,7 +19,7 @@ public class Logout : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<LogoutResponse> LogoutAccount([FromHeader] HeaderDTO header)
     {
         LogoutResponse response = new();

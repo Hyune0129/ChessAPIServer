@@ -38,7 +38,8 @@ public class Login : ControllerBase
 
         // verify token from login server
         // lastlogin time update
-        response.Result = await _authService.Login(request.UserId, request.AccountToken);
+
+        response.Result = await _authService.VerifyTokenToLoginServer(request.UserId, request.AccountToken);
         if (response.Result != ErrorCode.None)
         {
             // if new user response ErrorCode 2005
@@ -48,6 +49,13 @@ public class Login : ControllerBase
         // user data load
         (response.Result, response.userData) = await _dataLoadService.LoadUserData(request.UserId);
 
+        if (response.Result != ErrorCode.None)
+        {
+            return response;
+        }
+
+        // update last login time
+        response.Result = await _authService.UpdateLastLoginTime(request.UserId);
         if (response.Result != ErrorCode.None)
         {
             return response;

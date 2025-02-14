@@ -1,18 +1,47 @@
-using APIServer.Models.GameDB;
+using System.Data;
 using APIServer.Repository.Interfaces;
+using Microsoft.Extensions.Options;
+using MySqlConnector;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace APIServer.Repository;
 
-public class GameDb : IGameDb
+public partial class GameDb : IGameDb
 {
-    // todo : gamedb implement
-    public Task<GdbUserInfo> GetUserByUid(long uid)
+    readonly IOptions<DbConfig> _dbConfig;
+    readonly ILogger<GameDb> _logger;
+    readonly MySqlCompiler _compiler;
+    IDbConnection _dbConn;
+    readonly QueryFactory _queryFactory;
+    public GameDb(IOptions<DbConfig> dbConfig, ILogger<GameDb> logger)
     {
-        throw new NotImplementedException();
+        _dbConfig = dbConfig;
+        _logger = logger;
+
+        Open();
+
+        _compiler = new MySqlCompiler();
+        _queryFactory = new QueryFactory(_dbConn, _compiler);
+
     }
 
-    public Task<int> UpdateLastLoginTime(long uid)
+    public void Dispose()
     {
-        throw new NotImplementedException();
+        Close();
+    }
+
+
+
+    void Open()
+    {
+        _dbConn = new MySqlConnection(_dbConfig.Value.GameDb);
+
+        _dbConn.Open();
+    }
+
+    void Close()
+    {
+        _dbConn.Close();
     }
 }

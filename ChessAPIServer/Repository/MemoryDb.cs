@@ -26,7 +26,7 @@ public class MemoryDb : IMemoryDb
     /// <summary>
     /// register token, uid => login
     /// </summary>
-    public async Task<ErrorCode> RegistUserAuthAsync(string token, int uid)
+    public async Task<ErrorCode> RegisterUserAuthAsync(string token, long uid)
     {
         var key = MemoryDbKeyMaker.MakeUIDKey(uid.ToString());
         ErrorCode result = ErrorCode.None;
@@ -46,9 +46,9 @@ public class MemoryDb : IMemoryDb
                 return result;
             }
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[RegistUserAsync] Uid:{uid}, Token:{token}, ErrorMessage:Redis Connection Error");
+            _logger.ZLogError(e, $"[RegistUserAsync] Uid:{uid}, Token:{token}, ErrorMessage:Redis Connection Error");
             result = ErrorCode.LoginFailAddRedis;
             return result;
         }
@@ -85,9 +85,9 @@ public class MemoryDb : IMemoryDb
                 return result;
             }
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[CheckUserAuthAsync] Email = {id}, AuthToken = {authToken}, ErrorMessage:Redis Connection Error");
+            _logger.ZLogError(e, $"[CheckUserAuthAsync] Email = {id}, AuthToken = {authToken}, ErrorMessage:Redis Connection Error");
             result = ErrorCode.CheckAuthFailException;
             return result;
         }
@@ -111,9 +111,9 @@ public class MemoryDb : IMemoryDb
 
             return (true, user.Value);
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[GetUserAsync] UID:{uid}, ErrorMessage:ID does Not Exist");
+            _logger.ZLogError(e, $"[GetUserAsync] UID:{uid}, ErrorMessage:ID does Not Exist");
             return (false, null);
         }
     }
@@ -136,9 +136,9 @@ public class MemoryDb : IMemoryDb
 
 
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[SetUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
+            _logger.ZLogError(e, $"[SetUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
             return false;
         }
 
@@ -161,9 +161,9 @@ public class MemoryDb : IMemoryDb
             var redisResult = await redis.DeleteAsync();
             return redisResult;
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[DelUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
+            _logger.ZLogError(e, $"[DelUserReqLockAsync] Key = {key}, ErrorMessage:Redis Connection Error");
             return false;
         }
     }
@@ -190,9 +190,9 @@ public class MemoryDb : IMemoryDb
 
             return (true, num.Value);
         }
-        catch
+        catch (Exception e)
         {
-            _logger.ZLogError($"[GetRoomNumber] Key = {key}, ErrorMessage: RedisConnection Error");
+            _logger.ZLogError(e, $"[GetRoomNumber] Key = {key}, ErrorMessage: RedisConnection Error");
             return (false, -1);
         }
     }
