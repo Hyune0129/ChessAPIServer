@@ -2,6 +2,7 @@ namespace APIServer.Models.GameDB;
 
 public class GdbUserInfo
 {
+    public int uid { get; set; }
     public int player_id { get; set; }
     public string nickname { get; set; }
     public DateTime create_dt { get; set; }

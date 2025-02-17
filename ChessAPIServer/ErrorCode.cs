@@ -46,6 +46,9 @@ public enum ErrorCode : UInt16
     InitNewUserGameDataFailGameList = 2027,
     InitNewUserGameDataFailMoney = 2028,
     InitNewUserGameDataFailAttendance = 2029,
+    UpdateUserNickNameFailException = 2030,
+    UpdateUserNickNameFailDuplicateNickname = 2031,
+    UpdateUserNicknameFail = 2032,
 
     // Friend 2100
     FriendSendReqFailUserNotExist = 2101,

@@ -1,6 +1,7 @@
 namespace APIServer.Repository;
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
+using MySqlConnector;
 using SqlKata.Execution;
 using ZLogger;
 
@@ -8,32 +9,34 @@ public partial class GameDb : IGameDb
 {
     public async Task<GdbUserInfo> GetUserByUid(long uid)
     {
-        try
-        {
-            GdbUserInfo gdbUserInfo = new();
-            gdbUserInfo = await _queryFactory.Query("user").Where("uid", uid).FirstOrDefaultAsync<GdbUserInfo>();
-            _logger.ZLogInformation($"[GameDb.GetUserByUid] uid : {uid}");
-            return gdbUserInfo;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogError(ex, $"[GameDb.GetUserByUid] uid : {uid} ErrorCode : {ErrorCode.UserInfoFailException}");
-            return null;
-        }
+        GdbUserInfo gdbUserInfo = await _queryFactory.Query("user").Where("uid", uid).FirstOrDefaultAsync<GdbUserInfo>();
+        return gdbUserInfo;
     }
 
     public async Task<int> UpdateLastLoginTime(long uid)
     {
-        try
+        var count = await _queryFactory.Query("user").Where(uid).UpdateAsync(new { recent_login_dt = DateTime.Now });
+        return count;
+    }
+
+
+    public async Task<int> InsertUser(long uid, string nickname)
+    {
+        int count = await _queryFactory.Query("user").InsertAsync(new
         {
-            var count = await _queryFactory.Query("user").Where(uid).UpdateAsync(new { recent_login_dt = DateTime.Now });
-            _logger.ZLogInformation($"[GameDb.UpdateLastLoginTime] uid : {uid}");
-            return count;
-        }
-        catch (Exception ex)
+            player_id = uid,
+            nickname = nickname
+        });
+        return count;
+    }
+
+    public async Task<int> UpdateUserNickname(long uid, string nickname)
+    {
+        int count = await _queryFactory.Query("user")
+        .Where("uid", uid).UpdateAsync(new
         {
-            _logger.ZLogError(ex, $"[GameDb.UpdateLastLoginTime] uid : {uid} ErrorCode : {ErrorCode.LoginUpdateRecentLoginFailException}");
-            return -1;
-        }
+            nickname = nickname
+        });
+        return count;
     }
 }

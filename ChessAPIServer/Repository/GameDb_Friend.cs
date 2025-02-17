@@ -1,6 +1,7 @@
 using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using SqlKata.Execution;
+using ZLogger;
 
 namespace APIServer.Repository;
 
@@ -8,34 +9,41 @@ public partial class GameDb : IGameDb
 {
     public async Task<GdbFriendInfo> GetFriendInfo(long senderUid, long receiverUid)
     {
-        try
+        GdbFriendInfo friendInfo = await _queryFactory.Query("friend").Where("uid", senderUid).Where("friend_uid", receiverUid).FirstOrDefaultAsync<GdbFriendInfo>();
+        _logger.ZLogInformation($"[GameDb.GetFriendInfo] senderUid : {senderUid}, receiverUid : {receiverUid}");
+        return friendInfo;
+    }
+    public async Task<int> InsertFriendReq(long senderUid, long receiverUid)
+    {
+        return await _queryFactory.Query("friend").InsertAsync(new
         {
-            GdbFriendInfo friendInfo = await _queryFactory.Query("friend").Where("uid", senderUid).Where("friend_uid", receiverUid).FirstOrDefaultAsync<GdbFriendInfo>();
+            uid = senderUid,
+            friend_uid = receiverUid,
+        });
 
-        }
-        catch (Exception ex)
+    }
+    public async Task<int> UpdateFriendReq(long senderUid, long receiverUid, bool friendYN)
+    {
+        return await _queryFactory.Query("friend")
+        .Where("uid", senderUid)
+        .Where("friend_uid", receiverUid)
+        .UpdateAsync(new
         {
-
-        }
+            friend_yn = friendYN
+        });
     }
-    public Task<int> InsertFriendReq(long senderUid, long receiverUid)
+    public async Task<int> DeleteFriend(long senderUid, long receiverUid)
     {
-
-        throw new NotImplementedException();
+        return await _queryFactory.Query("friend")
+        .Where("uid", senderUid)
+        .Where("friend_uid", receiverUid)
+        .DeleteAsync();
     }
-    public Task<int> UpdateFriendReq(long senderUid, long receiverUid, bool friendYN)
+    public async Task<IEnumerable<GdbFriendInfo>> GetFriendListByUid(long uid)
     {
-        throw new NotImplementedException();
-    }
-    public Task<int> DeleteFriend(long senderUid, long receiverUid)
-    {
-
-        throw new NotImplementedException();
-    }
-    public Task<IEnumerable<GdbFriendInfo>> GetFriendListByUid(long uid)
-    {
-
-        throw new NotImplementedException();
+        return await _queryFactory.Query("friend")
+        .Where("uid", uid)
+        .GetAsync<GdbFriendInfo>();
     }
 
 

@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace APIServer.DTO.Friend;
 
-class FriendDeleteRequest
+public class FriendDeleteRequest
 {
     [Required]
-    long friendUid { get; set; }
+    public long friendUid { get; set; }
 }
 
-class FriendDeleteResponse : ErrorCodeDTO
+public class FriendDeleteResponse : ErrorCodeDTO
 {
 
 }
