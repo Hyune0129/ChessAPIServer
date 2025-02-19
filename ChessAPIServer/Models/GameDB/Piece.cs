@@ -74,7 +74,3 @@ public abstract class Piece
     public abstract bool MoveCheck(string pos);
 }
 
-public enum Team
-{
-    White, Black
-}

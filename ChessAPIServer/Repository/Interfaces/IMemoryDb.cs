@@ -9,5 +9,7 @@ public interface IMemoryDb
     public Task<ErrorCode> DeleteUserAuthAsync(long uid);
     public Task<bool> LockUserReqAsync(string key);
     public Task<bool> UnLockUserReqAsync(string key);
+    public Task<bool> CreateGameRoomAsync(long roomid);
+    public Task<RdbRoomData> GetRoomDataByRoomid(long roomid);
 
 }

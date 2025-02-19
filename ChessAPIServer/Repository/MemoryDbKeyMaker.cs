@@ -1,4 +1,4 @@
-namespace APIServer.Services;
+namespace APIServer.Repository;
 
 public class MemoryDbKeyMaker
 {
@@ -15,8 +15,9 @@ public class MemoryDbKeyMaker
         return userLockKey + id;
     }
 
-    public static string MakeRoomNumKey(string uid)
+    public static string MakeRoomNumKey(string id)
     {
-        return roomNumberKey + uid;
+        return roomNumberKey + id;
     }
+
 }
