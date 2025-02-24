@@ -1,32 +1,44 @@
 
-using Microsoft.OpenApi.Extensions;
 
 namespace APIServer.Models;
 
 
 // redisdb => rdb
+
+
 public class RdbAuthUserData
 {
     public long Uid { get; set; } = 0;
     public string Token { get; set; } = "";
 }
 
+// redis hashmap
 public class RdbRoomData
 {
-    // W(white) / B(black) + K / Q / B / N / R / P
+    public string white_uid { get; set; }
+    public string black_uid { get; set; }
+    public int turnCount { get; set; } = 0;
 
-    public byte[,] board { get; set; }
-
+    // White / Black
+    public string turn { get; set; } = "White"; // first turn is white
 
     // move record ref : https://www.chess.com/ko/terms/chess-notation-ko
-    public string last_move { get; set; }
+    public string last_move { get; set; } = "";
 
+}
+
+
+// redis string
+public class RdbGameData
+{
+    // W(white) / B(black) + K / Q / B / N / R / P
+    public byte[] board { get; set; }
 }
 
 
 public class RdbBoard
 {
-    private readonly byte[,] initBoard;
+    private readonly byte[] initBoard;
 
     /// <summary>
     /// make enums to byte
@@ -49,21 +61,21 @@ public class RdbBoard
         byte white_rook = (byte)RdbTeam.White | (byte)RdbPieces.Rook;
         byte white_pawn = (byte)RdbTeam.White | (byte)RdbPieces.Pawn;
 
-        initBoard = new byte[,]{
-                { black_rook,black_knight,black_bishop,black_queen,black_king,black_bishop,black_knight,black_rook},
-                { black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn},
-                { none,none,none,none,none,none,none,none},
-                { none,none,none,none,none,none,none,none},
-                { none,none,none,none,none,none,none,none},
-                { none,none,none,none,none,none,none,none},
-                { white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn},
-                { white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop,white_knight,white_rook},
+        initBoard = new byte[64]{
+                 black_rook,black_knight,black_bishop,black_queen,black_king,black_bishop,black_knight,black_rook, // 8
+                 black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn,black_pawn, // 7
+                 none,none,none,none,none,none,none,none, // 6
+                 none,none,none,none,none,none,none,none, // 5
+                 none,none,none,none,none,none,none,none, // 4
+                 none,none,none,none,none,none,none,none, // 3
+                 white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn,white_pawn, // 2
+                 white_rook,white_knight,white_bishop,white_queen,white_king,white_bishop,white_knight,white_rook, // 1
             }
         ;
     }
 
 
-    public byte[,] GetInitBoard()
+    public byte[] GetInitBoard()
     {
         return initBoard;
     }

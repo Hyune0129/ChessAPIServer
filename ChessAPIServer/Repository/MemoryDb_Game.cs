@@ -15,76 +15,142 @@ public partial class MemoryDb : IMemoryDb
     /// int  | return playing room number if not playing, return -1;
     /// </returns>
 
-    public async Task<(bool, int)> GetRoomNumber(string uid)
+    public async Task<(bool, int)> GetRoomNumber(long uid)
     {
-        var key = MemoryDbKeyMaker.MakeUIDKey(uid);
-        try
+        var key = MemoryDbKeyMaker.MakeUIDKey(uid.ToString());
+        RedisString<int> redis = new(_redisConn, key, null);
+        RedisResult<int> num = await redis.GetAsync();
+        if (!num.HasValue)
         {
-            RedisString<int> redis = new(_redisConn, key, null);
-            RedisResult<int> num = await redis.GetAsync();
-            if (!num.HasValue)
-            {
-                _logger.ZLogError($"[GetRommNumber] key = {key}, ErrorMessage : Not Find Matched RoomNumber, Get RoomNumber Error");
-            }
-
-            return (true, num.Value);
-        }
-        catch (Exception e)
-        {
-            _logger.ZLogError(e, $"[GetRoomNumber] Key = {key}, ErrorMessage: RedisConnection Error");
+            _logger.ZLogError($"[MemoryDb.GetRommNumber] key = {key}, ErrorMessage : Not Find Matched RoomNumber, Get RoomNumber Error");
             return (false, -1);
         }
+        _logger.ZLogInformation($"[MemoryDb.GetRommNumber] key = {key}");
+        return (true, num.Value);
     }
 
 
     public async Task<RdbRoomData> GetRoomDataByRoomid(long roomid)
     {
         var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
-        try
+        RedisDictionary<string, string> redis = new(_redisConn, key, GameKeyTimeSpan());
+        Dictionary<string, string> redisResult = await redis.GetAllAsync();
+        if (redisResult.Count == 0)
         {
-            RedisString<RdbRoomData> redis = new(_redisConn, key, GameKeyTimeSpan());
-            RedisResult<RdbRoomData> room = await redis.GetAsync();
-
-            if (!room.HasValue)
-            {
-                _logger.ZLogError($"[GetRoomDataByRoomid] Key = {key}, ErrorMessage : Not Find Matched RoomNumber");
-            }
-            return room.Value;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogError(ex, $"[GetRoomDataByRoomid] Key = {key}, ErrorMessage: RedisConnection Error");
+            _logger.ZLogError($"[MemoryDb.GetRoomDataByRoomid] Key = {key}, ErrorMessage : Not Find Matched RoomNumber");
             return null;
         }
+        RdbRoomData room = new()
+        {
+            white_uid = redisResult.GetValueOrDefault("white_uid", "-1"),
+            black_uid = redisResult.GetValueOrDefault("black_uid", "-1"),
+            turn = redisResult.GetValueOrDefault("turn", "None"),
+            last_move = redisResult.GetValueOrDefault("last_move", " ")
+        };
+
+        _logger.ZLogInformation($"[MemoryDb.GetRoomDataByRoomid] Key = {key}");
+        return room;
     }
 
+    public async Task<RdbGameData> GetGameDataByRoomid(long roomid)
+    {
+        var key = MemoryDbKeyMaker.MakeGameNumKey(roomid.ToString());
+        RedisString<byte[]> redis = new RedisString<byte[]>(_redisConn, key, GameKeyTimeSpan());
+        RedisResult<byte[]> board = await redis.GetAsync();
+        if (!board.HasValue)
+        {
+            _logger.ZLogDebug($"[MemoryDb.GetGameDataByRoomid] roomid : {roomid} Error : not matched game by roomid");
+            return null;
+        }
+        _logger.ZLogInformation($"[MemoryDb.GetGameDataByRoomid] roomid : {roomid}");
+        return new RdbGameData() { board = (byte[])board.GetValueOrNull() };
+    }
 
-    public async Task<bool> CreateGameRoomAsync(long roomid)
+    public async Task<bool> CreateRoom(long roomid, long white_uid, long black_uid)
     {
         var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
 
+        RdbRoomData room = new()
+        {
+            white_uid = white_uid.ToString(),
+            black_uid = black_uid.ToString()
+        };
+
+        RedisHashSet<RdbRoomData> redis = new(_redisConn, key, GameKeyTimeSpan());
+
+        if (!await redis.AddAsync(room))
+        {
+            _logger.ZLogError($"[MemoryDb.CreateRoom] key = {key}, ErrorMessage : redis Create Failed");
+            return false;
+        }
+
+        _logger.ZLogInformation($"[MemoryDb.CreateRoom] key = {key}");
+        return true;
+    }
+
+    public async Task<bool> CreateGame(long roomid)
+    {
+        var key = MemoryDbKeyMaker.MakeGameNumKey(roomid.ToString());
         RdbBoard board = new();
+        RdbGameData game = new()
+        {
+            board = board.GetInitBoard() // 8 * 8 => byte[64] chess board
+        };
+
+        RedisString<RdbGameData> redisString = new(_redisConn, key, GameKeyTimeSpan());
+        if (!await redisString.SetAsync(game))
+        {
+            _logger.ZLogError($"[MemoryDb.CreateGame] key = {key}, ErrorMessage : redis Create Failed");
+            return false;
+        }
+        _logger.ZLogInformation($"[MemoryDb.CreateGame] key = {key}");
+        return true;
+    }
+
+    public async Task<bool> UpdateRoomData(long roomid, string turn, int turnCount, string last_move)
+    {
+        var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
 
         RdbRoomData room = new()
         {
-            board = board.GetInitBoard() // 8 * 8 chess board
+            turn = turn,
+            turnCount = turnCount,
+            last_move = last_move
         };
 
-        try
+        RedisHashSet<RdbRoomData> redis = new(_redisConn, key, GameKeyTimeSpan());
+        if (!await redis.AddAsync(room))
         {
-            RedisString<RdbRoomData> redis = new(_redisConn, key, GameKeyTimeSpan());
-            if (!await redis.SetAsync(room))
-            {
-                _logger.ZLogError($"[CreateGameRoomAsync] Key = {key}, ErrorMessage : redis Create Failed");
-            }
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.ZLogError(ex, $"[CreateGameRoomAsync] Key = {key}, ErrorMessage : RedisConnection Error");
+            _logger.ZLogDebug($"[MemoeyDb.UpdataRoomData] roomid : {roomid}, turn : {turn}, last_move : {last_move} Error : redis update error");
             return false;
         }
+
+
+
+
+
+
+        _logger.ZLogInformation($"[MemoeyDb.UpdataRoomData] roomid : {roomid}, turn : {turn}, last_move : {last_move}");
+        return true;
+
     }
 
+    public async Task<bool> UpdateGameData(long roomid, byte[] board)
+    {
+        var key = MemoryDbKeyMaker.MakeGameNumKey(roomid.ToString());
+        RedisString<RdbGameData> redis = new(_redisConn, key, GameKeyTimeSpan());
+        RdbGameData game = new()
+        {
+            board = board
+        };
+        if (!await redis.SetAsync(game))
+        {
+            _logger.ZLogDebug($"[MemoryDb.UpdateGameData] roomid : {roomid} Error : redis update error");
+            return false;
+        }
+
+        _logger.ZLogInformation($"[MemoryDb.UpdateGameData] roomid : {roomid}");
+        return true;
+    }
 
 }

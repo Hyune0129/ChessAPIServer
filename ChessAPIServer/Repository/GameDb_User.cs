@@ -20,11 +20,11 @@ public partial class GameDb : IGameDb
     }
 
 
-    public async Task<int> InsertUser(long uid, string nickname)
+    public async Task<int> InsertUser(long player_id, string nickname)
     {
         int count = await _queryFactory.Query("user").InsertAsync(new
         {
-            player_id = uid,
+            player_id = player_id,
             nickname = nickname
         });
         return count;

@@ -71,62 +71,26 @@ public enum ErrorCode : UInt16
     FriendSendReqFailNeedAccept = 2121,
 
     // Game 2200
-    MiniGameListFailException = 2201,
-    GameSetNewUserListFailException = 2202,
-    GameSetNewUserListFailInsert = 2203,
-    MiniGameUnlockFailInsert = 2204,
-    MiniGameUnlockFailException = 2205,
-    MiniGameInfoFailException = 2206,
-    MiniGameSaveFailException = 2207,
-    MiniGameSaveFailGameLocked = 2208,
-    MiniGameUnlockFailAlreadyUnlocked = 2209,
-    MiniGameSetPlayCharFailUpdate = 2210,
-    MiniGameSetPlayCharFailException = 2211,
-    MiniGameSaveFailFoodDecrement = 2212,
+    GameBoardInitFailException = 2201,
+    GameBoardInitFailCreateRoomFail = 2202,
+    GameBoardInitFailCreateGameFail = 2203,
+    MovePieceFailNotVaildPlayer = 2204,
+    MovePieceFailException = 2205,
+    MovePieceFailNotYourTurn = 2206,
+    MovePieceFailUpdateRoom = 2207,
+    MovePieceFailUpdateGame = 2208,
+    MovePieceFailGameNotExist = 2209,
+    MovePieceFailRoomNotExist = 2210,
+    MovePieceFailInsertMove = 2211,
 
-    SetUserScoreFailException = 2301,
     GetRankingFailException = 2302,
     GetUserRankFailException = 2303,
 
     // Item 3000 ~
-    CharReceiveFailInsert = 3011,
-    CharReceiveFailLevelUP = 3012,
-    CharReceiveFailIncrementCharCnt = 3013,
-    CharReceiveFailException = 3014,
-    CharListFailException = 3015,
-    CharNotExist = 3016,
-    CharSetCostumeFailUpdate = 3017,
-    CharSetCostumeFailException = 3018,
-
-    SkinReceiveFailAlreadyOwn = 3021,
-    SkinReceiveFailInsert = 3022,
-    SkinReceiveFailException = 3023,
-    SkinListFailException = 3024,
-
-    CostumeReceiveFailInsert = 3031,
-    CostumeReceiveFailLevelUP = 3032,
-    CostumeReceiveFailIncrementCharCnt = 3033,
-    CostumeReceiveFailException = 3034,
-    CostumeListFailException = 3035,
-    CharSetCostumeFailHeadNotExist = 3036,
-    CharSetCostumeFailFaceNotExist = 3037,
-    CharSetCostumeFailHandNotExist = 3038,
-
-    FoodReceiveFailInsert = 3041,
-    FoodReceiveFailIncrementFoodQty = 3042,
-    FoodReceiveFailException = 3043,
-    FoodListFailException = 3044,
-    FoodGearReceiveFailInsert = 3045,
-    FoodGearReceiveFailIncrementFoodGear = 3046,
-    FoodGearReceiveFailException = 3047,
-
-    GachaReceiveFailException = 3051,
-
 
     //GameDb 4000~ 
     GameDB_Fail_LoadData = 4001,
     GetGameDbConnectionFail = 4002,
-
 
 
     // MasterDb 5000 ~

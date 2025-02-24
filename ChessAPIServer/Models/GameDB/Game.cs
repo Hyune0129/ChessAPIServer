@@ -5,7 +5,15 @@ public class GdbGameInfo
     public int game_id { get; set; }
     public int white_uid { get; set; }
     public int black_uid { get; set; }
+    public bool is_finished { get; set; } = false;
+}
 
-    // move record ref : https://www.chess.com/ko/terms/chess-notation-ko
-    public List<string> move_record { get; set; }
+public class GdbGameMoveRecord
+{
+    public int game_id { get; set; }
+
+    public int count { get; set; }
+    public string piece { get; set; }
+    public string from { get; set; }
+    public string to { get; set; }
 }
