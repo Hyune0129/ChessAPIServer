@@ -1,6 +1,7 @@
 using System.Text.Json;
 using APIServer.DTO;
 using APIServer.Models;
+using APIServer.Repository;
 using APIServer.Repository.Interfaces;
 
 namespace APIServer.Middleware;
@@ -65,7 +66,7 @@ public class CheckUserAuthAndLoadUserData
         }
 
         // redis key lock check
-        var userLockKey = Services.MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
+        var userLockKey = MemoryDbKeyMaker.MakeUserLockKey(userInfo.Uid.ToString());
         if (await SetLockAndIsFailThenSendError(context, userLockKey))
         {
             return;

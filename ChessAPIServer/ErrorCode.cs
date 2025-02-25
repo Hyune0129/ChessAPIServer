@@ -82,6 +82,11 @@ public enum ErrorCode : UInt16
     MovePieceFailGameNotExist = 2209,
     MovePieceFailRoomNotExist = 2210,
     MovePieceFailInsertMove = 2211,
+    WaitTurnFailException = 2212,
+    WaitTurnFailGameNotExist = 2213,
+    WaitTurnFailRoomNotExist = 2214,
+    WaitTurnFailNotVaildPlayer = 2215,
+    WaitTurnFailTimeout = 2216,
 
     GetRankingFailException = 2302,
     GetUserRankFailException = 2303,

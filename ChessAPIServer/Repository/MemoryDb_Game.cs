@@ -125,14 +125,23 @@ public partial class MemoryDb : IMemoryDb
             return false;
         }
 
-
-
-
-
-
         _logger.ZLogInformation($"[MemoeyDb.UpdataRoomData] roomid : {roomid}, turn : {turn}, last_move : {last_move}");
         return true;
 
+    }
+
+    public async Task<string> GetTurnByRoomid(long roomid)
+    {
+        var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
+
+        RedisDictionary<string, string> redis = new(_redisConn, key, GameKeyTimeSpan());
+
+        RedisResult<string> result = await redis.GetAsync("turn");
+        if (!result.HasValue)
+        {
+            return null;
+        }
+        return result.Value;
     }
 
     public async Task<bool> UpdateGameData(long roomid, byte[] board)

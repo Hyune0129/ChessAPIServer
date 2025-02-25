@@ -6,5 +6,8 @@ public class PieceMoveResponse : ErrorCodeDTO
 
 public class PieceMoveRequest
 {
-    public string move_code { get; set; }
+    public long room_id { get; set; }
+    public string from { get; set; }
+    public string to { get; set; }
+    public string piece { get; set; }
 }

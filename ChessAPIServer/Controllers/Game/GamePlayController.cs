@@ -23,17 +23,17 @@ public class GamePlayController : ControllerBase
     public async Task<PieceMoveResponse> MovePiece([FromHeader] HeaderDTO header, PieceMoveRequest request)
     {
         PieceMoveResponse response = new();
-        response.Result = await _gameService.MovePiece(header.Uid, request.move_code);
-        _logger.ZLogInformation($"[MovePiece] Uid : {header.Uid}, move_code : {request.move_code}");
+        response.Result = await _gameService.MovePiece(header.Uid, request.room_id, request.piece, request.from, request.to);
+        _logger.ZLogInformation($"[MovePiece] Uid : {header.Uid}, room_id : {request.room_id}, piece : {request.piece}, from : {request.from}, to : {request.to}");
         return response;
     }
 
     [HttpPost("/waitTurn")]
-    public async Task<TurnWaitResponse> WaitTurn(TurnWaitRequest request)
+    public async Task<TurnWaitResponse> WaitTurn([FromHeader] HeaderDTO header, TurnWaitRequest request)
     {
         // long polling system
         TurnWaitResponse response = new();
-        response.Result = await _gameService.WaitTurn(request.game_key);
+        (response.Result, response.roomData) = await _gameService.WaitTurn(header.Uid, request.room_id);
 
         return response;
     }

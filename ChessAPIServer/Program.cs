@@ -11,11 +11,13 @@ IConfiguration configuration = builder.Configuration;
 
 builder.Services.Configure<DbConfig>(configuration.GetSection(nameof(DbConfig)));
 
+
+// repo
 builder.Services.AddTransient<IGameDb, GameDb>();
 builder.Services.AddSingleton<IMemoryDb, MemoryDb>();
 builder.Services.AddSingleton<IMasterDb, MasterDb>();
 
-
+// service
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IDataLoadService, DataLoadService>();

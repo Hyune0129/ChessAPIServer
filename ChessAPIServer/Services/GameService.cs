@@ -1,3 +1,4 @@
+using APIServer.DTO.Game;
 using APIServer.Models;
 using APIServer.Repository;
 using APIServer.Repository.Interfaces;
@@ -169,10 +170,67 @@ public class GameService : IGameService
         throw new NotImplementedException();
     }
 
-    // todo : find and implement long polling
-    public Task<ErrorCode> WaitTurn(long uid, long room_id)
+    /// <summary>
+    /// long polling.
+    /// if has updated data(turn), send data 
+    /// </summary>
+    public async Task<(ErrorCode, GameDataInfo)> WaitTurn(long uid, long room_id)
     {
-        throw new NotImplementedException();
+        const int TIMEOUT_TIME = 30000; // ms
+        const int INTERVAL_TIME = 1000; // ms
+        try
+        {
+            RdbRoomData room = await _memoryDb.GetRoomDataByRoomid(room_id);
+            Team team;
+            Team turn = (Team)Enum.Parse(typeof(Team), room.turn);
+
+            if (room is null)
+            {
+                _logger.ZLogDebug($"[GameService.WaitTurn] uid : {uid}, room_id : {room_id}, ErrorCode : {ErrorCode.WaitTurnFailRoomNotExist}");
+                return (ErrorCode.WaitTurnFailRoomNotExist, null);
+            }
+
+
+            if (room.black_uid.Equals(uid.ToString()))
+            {
+                // player is black
+                team = (Team)Enum.Parse(typeof(Team), "Black");
+            }
+            else if (room.white_uid.Equals(uid.ToString()))
+            {
+                // player is white
+                team = (Team)Enum.Parse(typeof(Team), "White");
+            }
+            else
+            {
+                // not player
+                _logger.ZLogDebug($"[GameService.MovePiece] uid : {uid}, room_id : {room_id}, ErrorCode : {ErrorCode.WaitTurnFailNotVaildPlayer}");
+                return (ErrorCode.WaitTurnFailNotVaildPlayer, null);
+            }
+
+            int waitTime = 0;
+
+            // check during 30 sec
+            while (waitTime < TIMEOUT_TIME)
+            {
+                // data check
+                if (team == (Team)Enum.Parse(typeof(Team), await _memoryDb.GetTurnByRoomid(room_id)))
+                {
+                    // send data 
+                    GameDataInfo gameData = new();
+                    gameData.roomData = await _memoryDb.GetRoomDataByRoomid(room_id);
+                    return (ErrorCode.None, gameData);
+                }
+                await Task.Delay(INTERVAL_TIME);
+                waitTime += INTERVAL_TIME;
+            }
+            return (ErrorCode.WaitTurnFailTimeout, null);
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogError(ex, $"[GameService.WaitTurn] uid : {uid}, room_id : {room_id} ErrorCode : {ErrorCode.WaitTurnFailException}");
+            return (ErrorCode.WaitTurnFailException, null);
+        }
     }
 
     Team GetNextTurn(Team currentTurn)
