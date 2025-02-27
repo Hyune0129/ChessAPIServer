@@ -1,10 +1,23 @@
 namespace APIServer.Domain.Pieces;
 public class Knight : Piece
 {
-    public new const string code_name = "N";
 
-    public override bool MoveCheck(int index)
+    public Knight(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
-        throw new NotImplementedException();
+    }
+    public override bool MoveCheck(int row, int col)
+    {
+        if (row < 0 || row > 7 || col < 0 || col > 7)
+        {
+            return false;
+        }
+        if ((positionRow - row == 2 && positionCol - col == 1) || (positionRow - row == 2 && positionCol - col == -1) ||
+            (positionRow - row == -2 && positionCol - col == 1) || (positionRow - row == -2 && positionCol - col == -1) ||
+            (positionRow - row == 1 && positionCol - col == 2) || (positionRow - row == 1 && positionCol - col == -2) ||
+            (positionRow - row == -1 && positionCol - col == 2) || (positionRow - row == -1 && positionCol - col == -2))
+        {
+            return true;
+        }
+        return false;
     }
 }

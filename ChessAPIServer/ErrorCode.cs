@@ -87,6 +87,7 @@ public enum ErrorCode : UInt16
     WaitTurnFailRoomNotExist = 2214,
     WaitTurnFailNotVaildPlayer = 2215,
     WaitTurnFailTimeout = 2216,
+    SurrenderGameFailException = 2217,
 
     GetRankingFailException = 2302,
     GetUserRankFailException = 2303,

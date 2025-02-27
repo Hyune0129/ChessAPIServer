@@ -1,3 +1,4 @@
+using APIServer.Domain;
 using APIServer.Models;
 using APIServer.Repository.Interfaces;
 using CloudStructures;
@@ -91,10 +92,9 @@ public partial class MemoryDb : IMemoryDb
     public async Task<bool> CreateGame(long roomid)
     {
         var key = MemoryDbKeyMaker.MakeGameNumKey(roomid.ToString());
-        RdbBoard board = new();
         RdbGameData game = new()
         {
-            board = board.GetInitBoard() // 8 * 8 => byte[64] chess board
+            board = _boardMaker.GetInitBoard() // 8 * 8 => byte[64] chess board
         };
 
         RedisString<RdbGameData> redisString = new(_redisConn, key, GameKeyTimeSpan());
@@ -161,5 +161,19 @@ public partial class MemoryDb : IMemoryDb
         _logger.ZLogInformation($"[MemoryDb.UpdateGameData] roomid : {roomid}");
         return true;
     }
+
+    // public async Task<bool> DeleteRoom(long roomid)
+    // {
+    //     var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
+    //     RedisHashSet<RdbRoomData> redis = new(_redisConn, key, GameKeyTimeSpan());
+    //     return await redis.DeleteAsync();
+    // }
+    // public async Task<bool> DeleteGame(long roomid)
+    // {
+    //     var key = MemoryDbKeyMaker.MakeGameNumKey(roomid.ToString());
+    //     RedisString<byte[]> redis = new(_redisConn, key, GameKeyTimeSpan());
+    //     return await redis.DeleteAsync();
+    // }
+
 
 }

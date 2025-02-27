@@ -1,3 +1,4 @@
+using APIServer.Domain;
 using APIServer.Repository.Interfaces;
 using CloudStructures;
 using Microsoft.Extensions.Options;
@@ -11,13 +12,15 @@ public partial class MemoryDb : IMemoryDb
     readonly RedisConnection _redisConn;
     readonly ILogger<MemoryDb> _logger;
     readonly IOptions<DbConfig> _dbConfig;
+    readonly InitBoardMaker _boardMaker;
 
-    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig)
+    public MemoryDb(ILogger<MemoryDb> logger, IOptions<DbConfig> dbConfig, InitBoardMaker boardMaker)
     {
         _logger = logger;
         _dbConfig = dbConfig;
         RedisConfig config = new("default", _dbConfig.Value.Redis);
         _redisConn = new RedisConnection(config);
+        _boardMaker = boardMaker;
     }
     public TimeSpan LoginTimeSpan()
     {

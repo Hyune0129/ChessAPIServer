@@ -1,3 +1,4 @@
+using APIServer.Domain;
 using APIServer.Repository;
 using APIServer.Repository.Interfaces;
 using APIServer.Services;
@@ -24,6 +25,9 @@ builder.Services.AddTransient<IDataLoadService, DataLoadService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IFriendService, FriendService>();
 builder.Services.AddControllers();
+
+// domain
+builder.Services.AddSingleton<InitBoardMaker>();
 
 SettingLogger();
 

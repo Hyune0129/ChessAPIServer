@@ -1,6 +1,6 @@
+using APIServer.Domain;
 using APIServer.DTO.Game;
 using APIServer.Models;
-using APIServer.Repository;
 using APIServer.Repository.Interfaces;
 using APIServer.Services.Interfaces;
 using Microsoft.OpenApi.Extensions;
@@ -165,9 +165,18 @@ public class GameService : IGameService
         }
     }
 
-    public Task<ErrorCode> SurrenderGame(long uid, long room_id)
+    public async Task<ErrorCode> SurrenderGame(long uid, long room_id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _logger.ZLogInformation($"[GameService.SurrenderGame] uid : {uid}, room_id : {room_id}");
+            return ErrorCode.None;
+        }
+        catch (Exception ex)
+        {
+            _logger.ZLogError(ex, $"[GameService.SurrenderGame] uid : {uid}, room_id : {room_id} ErrorCode : {ErrorCode.SurrenderGameFailException}");
+            return ErrorCode.SurrenderGameFailException;
+        }
     }
 
     /// <summary>
