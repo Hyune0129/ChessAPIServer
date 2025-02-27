@@ -20,7 +20,7 @@ public class Pawn : Piece
                 }
                 break;
         }
-        first_moved = false;
+        pieceType = PieceType.Pawn;
     }
 
     public override bool MoveCheck(int row, int col)

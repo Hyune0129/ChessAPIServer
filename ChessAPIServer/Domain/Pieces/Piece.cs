@@ -53,6 +53,7 @@ public class BlankPiece : Piece
     public BlankPiece(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
         team = Team.None;
+        pieceType = PieceType.None;
     }
 
     public override bool MoveCheck(int row, int col)

@@ -3,6 +3,7 @@ public class Bishop : Piece
 {
     public Bishop(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
+        pieceType = PieceType.Bishop;
     }
     public override bool MoveCheck(int row, int col)
     {

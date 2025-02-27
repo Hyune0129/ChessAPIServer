@@ -1,9 +1,9 @@
 namespace APIServer.Domain.Pieces;
 public class King : Piece
 {
-    const PieceType pieceType = PieceType.King;
     public King(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
+        pieceType = PieceType.King;
     }
     public override bool MoveCheck(int row, int col)
     {

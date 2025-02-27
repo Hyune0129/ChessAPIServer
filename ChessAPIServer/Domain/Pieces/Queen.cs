@@ -3,6 +3,7 @@ public class Queen : Piece
 {
     public Queen(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
+        pieceType = PieceType.Queen;
     }
     public override bool MoveCheck(int row, int col)
     {

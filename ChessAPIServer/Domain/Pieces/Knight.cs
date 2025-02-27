@@ -4,6 +4,7 @@ public class Knight : Piece
 
     public Knight(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
     {
+        pieceType = PieceType.Knight;
     }
     public override bool MoveCheck(int row, int col)
     {
