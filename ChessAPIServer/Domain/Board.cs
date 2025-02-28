@@ -21,8 +21,11 @@ public class Board
         }
     }
 
-    public bool IsMoveValid(int fromRow, int fromCol, int toRow, int toCol)
+    public bool IsMoveValid(string from, string to)
     {
+        int fromRow, fromCol, toRow, toCol;
+        (fromRow, fromCol) = ParsePosition(from);
+        (toRow, toCol) = ParsePosition(to);
         if (fromRow < 0 || fromRow > 7 || fromCol < 0 || fromCol > 7 || toRow < 0 || toRow > 7 || toCol < 0 || toCol > 7)
         {
             return false;
@@ -47,5 +50,11 @@ public class Board
         }
 
         return false;
+    }
+    private (int, int) ParsePosition(string position)
+    {
+        int row = position[1] - '1';
+        int col = position[0] - 'a';
+        return (row, col);
     }
 }

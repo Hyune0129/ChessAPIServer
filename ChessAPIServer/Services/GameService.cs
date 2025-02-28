@@ -90,6 +90,7 @@ public class GameService : IGameService
         {
             RdbRoomData room = await _memoryDb.GetRoomDataByRoomid(room_id);
             RdbGameData game = await _memoryDb.GetGameDataByRoomid(room_id);
+            Board board = new(game.board);
             Team team;
             Team turn = (Team)Enum.Parse(typeof(Team), room.turn);
 
@@ -127,6 +128,13 @@ public class GameService : IGameService
             {
                 _logger.ZLogDebug($"[GameService.MovePiece] uid : {uid}, room_id : {room_id}, piece : {piece}, from : {from}, to : {to}, ErrorCode : {ErrorCode.MovePieceFailNotYourTurn}");
                 return ErrorCode.MovePieceFailNotYourTurn;
+            }
+
+            // is valid move?
+            if (!board.IsMoveValid(from, to))
+            {
+                _logger.ZLogDebug($"[GameService.MovePiece] uid : {uid}, room_id : {room_id}, piece : {piece}, from : {from}, to : {to}, ErrorCode : {ErrorCode.MovePieceFailNotValidMove}");
+                return ErrorCode.MovePieceFailNotValidMove;
             }
 
 
@@ -213,7 +221,7 @@ public class GameService : IGameService
             else
             {
                 // not player
-                _logger.ZLogDebug($"[GameService.MovePiece] uid : {uid}, room_id : {room_id}, ErrorCode : {ErrorCode.WaitTurnFailNotVaildPlayer}");
+                _logger.ZLogDebug($"[GameService.WaitTurn] uid : {uid}, room_id : {room_id}, ErrorCode : {ErrorCode.WaitTurnFailNotVaildPlayer}");
                 return (ErrorCode.WaitTurnFailNotVaildPlayer, null);
             }
 
