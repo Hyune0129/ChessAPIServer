@@ -4,6 +4,7 @@ using APIServer.Model.DAO;
 using APIServer.Utils;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
+using SqlKata.Compilers;
 using SqlKata.Execution;
 using ZLogger;
 
@@ -14,7 +15,7 @@ public class LoginDb : ILoginDb
     readonly IOptions<DbConfig> _dbConfig;
     readonly ILogger<LoginDb> _logger;
     IDbConnection _dbConn;
-    readonly SqlKata.Compilers.MySqlCompiler _compiler;
+    readonly MySqlCompiler _compiler;
     readonly QueryFactory _queryFactory;
 
     public LoginDb(ILogger<LoginDb> logger, IOptions<DbConfig> dbConfig)
@@ -24,7 +25,7 @@ public class LoginDb : ILoginDb
 
         Open();
 
-        _compiler = new SqlKata.Compilers.MySqlCompiler();
+        _compiler = new MySqlCompiler();
         _queryFactory = new QueryFactory(_dbConn, _compiler);
 
     }
@@ -48,14 +49,14 @@ public class LoginDb : ILoginDb
             });
             // count = row affected
 
-            _logger.ZLogDebug(
+            _logger.ZLogInformation(
                 $"[CreateAccount] email: {email}, salt_value : {saltValue}, hashed_pw:{hashingPassword}");
 
             return count != 1 ? ErrorCode.CreateAccountFailInsert : ErrorCode.None;
         }
         catch (Exception ex)
         {
-            _logger.ZLogError($"[AccountDb.CreateAccount] ErrorCode : {ErrorCode.CreateAccountFailException}");
+            _logger.ZLogError(ex, $"[LoginDb.CreateAccount] ErrorCode : {ErrorCode.CreateAccountFailException}");
             return ErrorCode.CreateAccountFailException;
         }
     }
@@ -63,9 +64,9 @@ public class LoginDb : ILoginDb
     {
         try
         {
-            Model.DAO.LdbAccountInfo userInfo = await _queryFactory.Query("account_info")
+            LdbAccountInfo userInfo = await _queryFactory.Query("account_info")
                                     .Where("Email", email)
-                                    .FirstOrDefaultAsync<Model.DAO.LdbAccountInfo>();
+                                    .FirstOrDefaultAsync<LdbAccountInfo>();
             if (userInfo is null)
             {
                 return (ErrorCode.LoginFailUserNotExist, 0);
@@ -81,6 +82,7 @@ public class LoginDb : ILoginDb
         }
         catch (Exception e)
         {
+            _logger.ZLogError(e, $"[LoginDb.VerifyUser] ErrorCode : {ErrorCode.LoginFailException}");
             return (ErrorCode.LoginFailException, 0);
         }
     }

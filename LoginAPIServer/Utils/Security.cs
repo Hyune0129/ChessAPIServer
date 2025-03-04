@@ -21,7 +21,7 @@ public class Security
     }
 
 
-    public static string MakeHashingToken(string saltValue, Int64 playerId)
+    public static string MakeHashingToken(string saltValue, long playerId)
     {
         var sha = SHA256.Create();
         var hash = sha.ComputeHash(Encoding.ASCII.GetBytes(saltValue + playerId));
