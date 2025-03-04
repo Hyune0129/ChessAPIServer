@@ -177,6 +177,11 @@ public class GameService : IGameService
     {
         try
         {
+            if (!await _memoryDb.UpdateRoomStatement(room_id, "Surrendered"))
+            {
+                _logger.ZLogDebug($"[GameService.SurrenderGame] uid : {uid}, room_id : {room_id}, ErrorCode : {ErrorCode.SurrenderGameFailUpdateRoom}");
+                return ErrorCode.SurrenderGameFailUpdateRoom;
+            }
             _logger.ZLogInformation($"[GameService.SurrenderGame] uid : {uid}, room_id : {room_id}");
             return ErrorCode.None;
         }
@@ -226,6 +231,7 @@ public class GameService : IGameService
             }
 
             int waitTime = 0;
+
 
             // check during 30 sec
             while (waitTime < TIMEOUT_TIME)

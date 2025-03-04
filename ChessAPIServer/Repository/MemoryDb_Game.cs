@@ -174,6 +174,18 @@ public partial class MemoryDb : IMemoryDb
     //     RedisString<byte[]> redis = new(_redisConn, key, GameKeyTimeSpan());
     //     return await redis.DeleteAsync();
     // }
+    public async Task<bool> UpdateRoomStatement(long roomid, string statement)
+    {
+        var key = MemoryDbKeyMaker.MakeRoomNumKey(roomid.ToString());
+        RedisDictionary<string, string> redis = new(_redisConn, key, GameKeyTimeSpan());
+        if (!await redis.SetAsync("game_status", statement))
+        {
+            _logger.ZLogDebug($"[MemoryDb.UpdateRoomStatement] roomid : {roomid}, statement : {statement} Error : redis update error");
+            return false;
+        }
+        _logger.ZLogInformation($"[MemoryDb.UpdateRoomStatement] roomid : {roomid}, statement : {statement}");
+        return true;
+    }
 
 
 }

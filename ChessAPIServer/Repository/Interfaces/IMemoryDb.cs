@@ -18,5 +18,6 @@ public interface IMemoryDb
     public Task<bool> UpdateRoomData(long roomid, string turn, int turnCount, string last_move);
     public Task<bool> UpdateGameData(long roomid, byte[] board);
     public Task<string> GetTurnByRoomid(long roomid);
+    public Task<bool> UpdateRoomStatement(long roomid, string statement);
 
 }

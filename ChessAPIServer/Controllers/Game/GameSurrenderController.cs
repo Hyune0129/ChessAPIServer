@@ -19,11 +19,11 @@ public class GameSurrenderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<GameSurrenderResponse> SurrenderGame([FromHeader] HeaderDTO header)
+    public async Task<GameSurrenderResponse> SurrenderGame([FromHeader] HeaderDTO header, GameSurrenderRequest request)
     {
         GameSurrenderResponse response = new();
-        response.Result = await _gameService.SurrenderGame(header.Uid);
-        _logger.ZLogInformation($"[GameSurrender] Uid : {header.Uid}");
+        response.Result = await _gameService.SurrenderGame(header.Uid, request.room_id);
+        _logger.ZLogInformation($"[GameSurrender] Uid : {header.Uid}, room_id : {request.room_id}");
         return response;
     }
 }

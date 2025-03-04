@@ -89,6 +89,7 @@ public enum ErrorCode : UInt16
     WaitTurnFailTimeout = 2216,
     SurrenderGameFailException = 2217,
     MovePieceFailNotValidMove = 2218,
+    SurrenderGameFailUpdateRoom = 2219,
 
     GetRankingFailException = 2302,
     GetUserRankFailException = 2303,
