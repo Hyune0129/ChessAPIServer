@@ -10,12 +10,12 @@
   - [ ] receive match
 
 - [ ] chess game
-  - [ ] init board
-  - [ ] move piece
-  - [ ] check
+  - [x] init board
+  - [x] move piece
+  - [x] check
     - [ ] checkmate
-  - [ ] reconnect
-  - [ ] surrender
+  - [x] reconnect
+  - [x] surrender
   - [ ] replay
   - [ ] chat
 
