@@ -1,0 +1,81 @@
+version: '1.0'
+
+services:
+  game-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - ./gamemysql-init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - game-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: redis:latest
+    networks:
+      - game-network
+
+  login-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./loginmysql-init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - login-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  login-server:
+    build:
+      context: ./LoginAPIServer
+      dockerfile: Dockerfile
+    depends_on:
+      login-mysql:
+        condition: service_healthy
+    ports:
+      - "5073:5073"
+    networks:
+      - login-network
+      - game-network
+    environment:
+      - ServerAddress=http://0.0.0.0:5073
+      - DbConfig__AccountDb=Server=login-mysql;Port=3306;user=login_user;Password=login_password;Database=account_db;Pooling=true;Min Pool Size=0;Max Pool Size=100;AllowUserVariables=True;
+
+  game-server:
+    build:
+      context: ./ChessAPIServer
+      dockerfile: Dockerfile
+    depends_on:
+      game-mysql:
+        condition: service_healthy
+    ports:
+      - "5074:5074"
+    networks:
+      - game-network
+    environment:
+      - DbConfig__Redis=redis
+      - DbConfig__GameDb=Server=game-mysql;Port=3306;user=game_user;Password=game_password;Database=game_db;Pooling=true;Min Pool Size=0;Max Pool Size=100;AllowUserVariables=True;
+      - DbConfig__MasterDb=Server=game-mysql;Port=3306;user=game_user;Password=game_password;Database=master_db;Pooling=true;Min Pool Size=0;Max Pool Size=100;AllowUserVariables=True;
+      - ServerAddress=http://0.0.0.0:5074
+      - AccountServerAddress=http://login-server:5073
+
+networks:
+  game-network:
+    driver: bridge
+  login-network:
+    driver: bridge
