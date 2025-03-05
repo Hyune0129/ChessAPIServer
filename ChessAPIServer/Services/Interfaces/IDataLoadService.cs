@@ -5,5 +5,5 @@ namespace APIServer.Services.Interfaces;
 
 public interface IDataLoadService
 {
-    Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(long userId);
+    Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(long player_id);
 }

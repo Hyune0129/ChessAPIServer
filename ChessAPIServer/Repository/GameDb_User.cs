@@ -3,7 +3,6 @@ using APIServer.Models.GameDB;
 using APIServer.Repository.Interfaces;
 using MySqlConnector;
 using SqlKata.Execution;
-using ZLogger;
 
 public partial class GameDb : IGameDb
 {
@@ -13,9 +12,15 @@ public partial class GameDb : IGameDb
         return gdbUserInfo;
     }
 
+    public async Task<GdbUserInfo> GetUserByPlayerId(long player_id)
+    {
+        GdbUserInfo gdbUserInfo = await _queryFactory.Query("user").Where("player_id", player_id).FirstOrDefaultAsync<GdbUserInfo>();
+        return gdbUserInfo;
+    }
+
     public async Task<int> UpdateLastLoginTime(long uid)
     {
-        var count = await _queryFactory.Query("user").Where(uid).UpdateAsync(new { recent_login_dt = DateTime.Now });
+        var count = await _queryFactory.Query("user").Where("uid", uid).UpdateAsync(new { recent_login_dt = DateTime.Now });
         return count;
     }
 

@@ -7,6 +7,7 @@ public interface IGameDb : IDisposable
 {
     Task<int> UpdateLastLoginTime(long uid);
     Task<GdbUserInfo> GetUserByUid(long uid);
+    Task<GdbUserInfo> GetUserByPlayerId(long player_id);
     Task<int> InsertUser(long player_id, string nickname);
     Task<int> UpdateUserNickname(long uid, string nickname);
     Task<GdbFriendInfo> GetFriendInfo(long senderUid, long receiverUid);

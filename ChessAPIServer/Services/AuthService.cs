@@ -20,9 +20,9 @@ public class AuthService : IAuthService
         _loginServerAPIAddress = configuration.GetSection("AccountServerAddress").Value + configuration.GetSection("AccountServerVerifyTokenAPI").Value;
         _gameDb = gameDb;
     }
-    public async Task<ErrorCode> DeleteUserToken(Int64 userid)
+    public async Task<ErrorCode> DeleteUserToken(long uid)
     {
-        return await _memoryDb.DeleteUserAuthAsync(userid);
+        return await _memoryDb.DeleteUserAuthAsync(uid);
     }
 
     /// <summary>
@@ -30,21 +30,16 @@ public class AuthService : IAuthService
     /// lastlogin time update
     /// if new user response ErrorCode 2005
     /// </summary>
-    public async Task<ErrorCode> VerifyTokenToLoginServer(long uid, string token)
+    public async Task<ErrorCode> VerifyTokenToLoginServer(long player_id, string token)
     {
         try
         {
             HttpClient client = new();
-            var loginServerResponse = await client.PostAsJsonAsync(_loginServerAPIAddress, new { PlayerId = uid, Token = token });
+            var loginServerResponse = await client.PostAsJsonAsync(_loginServerAPIAddress, new { PlayerId = player_id, Token = token });
 
             if (!ValidateLoginServerResponse(loginServerResponse))
             {
-                return ErrorCode.LoginServer_Fail_InvalidResponse;
-            }
-
-            var authResult = await loginServerResponse.Content.ReadFromJsonAsync<ErrorCodeDTO>();
-            if (!ValidateLoginServerAuthErrorCode(authResult))
-            {
+                _logger.ZLogDebug($"[VerifyTokenToLoginServer] ErrorCode:{ErrorCode.LoginServer_Fail_InvalidResponse} ");
                 return ErrorCode.LoginServer_Fail_InvalidResponse;
             }
 
@@ -65,7 +60,7 @@ public class AuthService : IAuthService
 
             if (count != 1)
             {
-                _logger.ZLogError($"[UpdateLastLoginTime] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFail}, count : {count}");
+                _logger.ZLogDebug($"[UpdateLastLoginTime] ErrorCode: {ErrorCode.LoginUpdateRecentLoginFail}, count : {count}");
                 return ErrorCode.LoginUpdateRecentLoginFail;
             }
 

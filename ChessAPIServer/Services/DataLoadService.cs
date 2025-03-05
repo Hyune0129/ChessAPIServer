@@ -17,16 +17,16 @@ public class DataLoadService : IDataLoadService
     }
 
 
-    public async Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(long userId)
+    public async Task<(ErrorCode, DataLoadUserInfo)> LoadUserData(long player_id)
     {
         DataLoadUserInfo dataLoadUserInfo = new();
-        dataLoadUserInfo.UserInfo = await _gameDb.GetUserByUid(userId);
+        dataLoadUserInfo.UserInfo = await _gameDb.GetUserByPlayerId(player_id);
         if (dataLoadUserInfo.UserInfo == null)
         {
-            _logger.ZLogError($"[DataLoadService.LoadUserData] uid : {userId}");
+            _logger.ZLogError($"[DataLoadService.LoadUserData] player_id : {player_id}");
             return (ErrorCode.GameDB_Fail_LoadData, null);
         }
-        _logger.ZLogInformation($"[DataLoadSErvice.LoadUserData] uid : {userId}");
+        _logger.ZLogInformation($"[DataLoadSErvice.LoadUserData] uid : {dataLoadUserInfo.UserInfo.uid}, player_id : {player_id}");
         return (ErrorCode.None, dataLoadUserInfo);
     }
 }

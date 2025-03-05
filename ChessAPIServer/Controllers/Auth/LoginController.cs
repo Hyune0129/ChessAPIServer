@@ -39,7 +39,7 @@ public class Login : ControllerBase
         // verify token from login server
         // lastlogin time update
 
-        response.Result = await _authService.VerifyTokenToLoginServer(request.UserId, request.AccountToken);
+        response.Result = await _authService.VerifyTokenToLoginServer(request.player_id, request.AccountToken);
         if (response.Result != ErrorCode.None)
         {
             // if new user response ErrorCode 2005
@@ -47,7 +47,7 @@ public class Login : ControllerBase
         }
 
         // user data load
-        (response.Result, response.userData) = await _dataLoadService.LoadUserData(request.UserId);
+        (response.Result, response.userData) = await _dataLoadService.LoadUserData(request.player_id);
 
         if (response.Result != ErrorCode.None)
         {
@@ -55,13 +55,20 @@ public class Login : ControllerBase
         }
 
         // update last login time
-        response.Result = await _authService.UpdateLastLoginTime(request.UserId);
+        response.Result = await _authService.UpdateLastLoginTime(response.userData.UserInfo.uid);
         if (response.Result != ErrorCode.None)
         {
             return response;
         }
 
-        _logger.ZLogInformation($"[Login] PlayerId :{request.UserId}");
+        // chess api token (memorydb)
+        response.Result = await _authService.RegisterToken(response.userData.UserInfo.uid, request.AccountToken);
+        if (response.Result != ErrorCode.None)
+        {
+            return response;
+        }
+
+        _logger.ZLogInformation($"[Login] PlayerId :{request.player_id}, uid : {response.userData.UserInfo.uid}, Nickname : {response.userData.UserInfo.nickname}");
         return response;
     }
 }

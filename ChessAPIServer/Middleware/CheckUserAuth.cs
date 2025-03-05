@@ -23,7 +23,7 @@ public class CheckUserAuthAndLoadUserData
 
         // login, register dont check token
         if (string.Compare(formString, "/Login", StringComparison.OrdinalIgnoreCase) == 0 ||
-        string.Compare(formString, "/CreateAccount", StringComparison.OrdinalIgnoreCase) == 0)
+        string.Compare(formString, "/UserCreate", StringComparison.OrdinalIgnoreCase) == 0)
         {
             await _next(context);
 
