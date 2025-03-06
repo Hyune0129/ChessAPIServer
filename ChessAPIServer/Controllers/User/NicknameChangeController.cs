@@ -1,3 +1,4 @@
+using APIServer.DTO;
 using APIServer.DTO.User;
 using APIServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ public class NicknameChange
     }
 
     [HttpPost]
-    public async Task<NicknameChangeResponse> ChangeNickname(NicknameChangeRequest request)
+    public async Task<NicknameChangeResponse> ChangeNickname([FromHeader] HeaderDTO header, NicknameChangeRequest request)
     {
         NicknameChangeResponse response = new();
-        response.Result = await _userService.ChangeNickname(request.Uid, request.Nickname);
-        _logger.ZLogInformation($"[NicknameChange] uid : {request.Uid}, nickname: {request.Nickname}");
+        response.Result = await _userService.ChangeNickname(header.Uid, request.Nickname);
+        _logger.ZLogInformation($"[NicknameChange] uid : {header.Uid}, nickname: {request.Nickname}");
         return response;
     }
 }
