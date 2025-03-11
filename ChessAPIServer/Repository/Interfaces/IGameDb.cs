@@ -19,5 +19,4 @@ public interface IGameDb : IDisposable
     Task<GdbGameInfo> GetGameByRoomId(long roomId);
     Task<int> UpdateGameFinsihedByRoomId(long roomId, bool is_finished);
     Task<int> InsertGameMove(long roomId, int count, string piece, string from, string to);
-
 }
