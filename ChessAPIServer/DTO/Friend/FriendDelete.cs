@@ -5,7 +5,7 @@ namespace APIServer.DTO.Friend;
 public class FriendDeleteRequest
 {
     [Required]
-    public long friendUid { get; set; }
+    public long FriendUid { get; set; }
 }
 
 public class FriendDeleteResponse : ErrorCodeDTO
