@@ -20,7 +20,7 @@ public class FriendList : ControllerBase
         _friendService = friendService;
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<FriendListResponse> ListFriend([FromHeader] HeaderDTO header)
     {
         FriendListResponse response = new();
