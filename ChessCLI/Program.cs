@@ -1,6 +1,5 @@
 ﻿using ChessCLI.Authentication;
 using ChessCLI.Chess;
-using ChessCLI.Chess.Authentication;
 
 SessionManager sessionManager;
 AuthService authService;

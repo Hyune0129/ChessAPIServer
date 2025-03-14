@@ -1,6 +1,6 @@
 using ChessCLI.Chess.Authentication;
 
-namespace ChessCLI.Chess.DataLoad;
+namespace ChessCLI.Chess.Data;
 
 public class ChessUserData
 {

@@ -1,6 +1,4 @@
-using APIServer.Models;
-
-namespace APIServer.Domain.Pieces;
+namespace ChessCLI.Chess.Domain.Pieces;
 
 
 public abstract class Piece

@@ -16,17 +16,33 @@ public class ChessPage
 
     public void MatchPage()
     {
-
         int seconds = 0;
-        while (true)
+        bool cancel = false;
+
+        Task.Run(() =>
+        {
+            while (true)
+            {
+                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.C)
+                {
+                    cancel = true;
+                    break;
+                }
+            }
+        });
+
+        while (!cancel)
         {
             Console.Clear();
-            Console.WriteLine("Searching for opponent...()");
+            Console.WriteLine("Searching for opponent...");
+            Console.WriteLine("Press 'C' to cancel.");
             Console.Write($"Matchmaking... ({seconds:00}:{seconds % 60:00})");
             // todo : match making server 
             Thread.Sleep(1000);
             seconds++;
         }
+
+        Console.WriteLine("Matchmaking canceled.");
     }
 
     public void FriendPage()

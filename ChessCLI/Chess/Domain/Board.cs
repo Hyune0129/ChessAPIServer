@@ -1,11 +1,13 @@
-using APIServer.Domain.Pieces;
-using Humanizer.Bytes;
+using ChessCLI.Chess.Domain;
+using ChessCLI.Chess.Domain.Pieces;
 
-namespace APIServer.Domain;
-
+namespace APIServer.Chess.Domain;
 public class Board
 {
-    Piece[,] board = new Piece[8, 8];
+    public Piece[,] board = new Piece[8, 8];
+    public (int, int) whiteKingPos;
+    public (int, int) blackKingPos;
+
     public Board(byte[] byteBoard)
     {
         byte teamMask = 0xF0;
@@ -16,6 +18,17 @@ public class Board
             {
                 Team team = (Team)((byteBoard[i * 8 + j] & teamMask) >> 4);
                 PieceType pieceType = (PieceType)(byteBoard[i * 8 + j] & pieceMask);
+                if (pieceType == PieceType.King)
+                {
+                    if (team == Team.White)
+                    {
+                        whiteKingPos = (i, j);
+                    }
+                    else
+                    {
+                        blackKingPos = (i, j);
+                    }
+                }
                 board[i, j] = Piece.GetPieceByPieceType(pieceType, i, j, team);
             }
         }
@@ -51,10 +64,27 @@ public class Board
 
         return false;
     }
+
     private (int, int) ParsePosition(string position)
     {
         int row = position[1] - '1';
         int col = position[0] - 'a';
         return (row, col);
+    }
+
+    public void RotateBoard()
+    {
+        Piece[,] rotatedBoard = new Piece[8, 8];
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                rotatedBoard[i, j] = board[7 - i, 7 - j];
+            }
+        }
+        board = rotatedBoard;
+
+        whiteKingPos = (7 - whiteKingPos.Item1, 7 - whiteKingPos.Item2);
+        blackKingPos = (7 - blackKingPos.Item1, 7 - blackKingPos.Item2);
     }
 }

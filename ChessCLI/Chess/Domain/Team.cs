@@ -1,4 +1,4 @@
-namespace APIServer.Domain;
+namespace ChessCLI.Chess.Domain;
 public enum Team
 {
     None = 0,

@@ -1,4 +1,4 @@
-namespace APIServer.Domain.Pieces;
+namespace ChessCLI.Chess.Domain.Pieces;
 public class Knight : Piece
 {
 

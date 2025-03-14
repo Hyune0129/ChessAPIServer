@@ -20,6 +20,8 @@ services:
 
   redis:
     image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - game-network
 
@@ -73,6 +75,20 @@ services:
       - DbConfig__MasterDb=Server=game-mysql;Port=3306;user=game_user;Password=game_password;Database=master_db;Pooling=true;Min Pool Size=0;Max Pool Size=100;AllowUserVariables=True;
       - ServerAddress=http://0.0.0.0:5074
       - AccountServerAddress=http://login-server:5073
+
+  matching-server:
+    build:
+      context: ./MatchAPIServer
+      dockerfile: Dockerfile
+    depends_on:
+      - game-server
+      - login-server
+    ports:
+      - "5075:5075"
+    networks:
+      - game-network
+    environment:
+      - ServerAddress=http://0.0.0.0:5075
 
 networks:
   game-network:

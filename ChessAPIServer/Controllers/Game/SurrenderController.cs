@@ -8,20 +8,20 @@ namespace APIServer.Controllers.Game;
 
 [ApiController]
 [Route("[controller]")]
-public class GameSurrenderController : ControllerBase
+public class SurrenderController : ControllerBase
 {
-    private readonly ILogger<GameSurrenderController> _logger;
+    private readonly ILogger<SurrenderController> _logger;
     private readonly IGameService _gameService;
-    public GameSurrenderController(ILogger<GameSurrenderController> logger, IGameService gameService)
+    public SurrenderController(ILogger<SurrenderController> logger, IGameService gameService)
     {
         _logger = logger;
         _gameService = gameService;
     }
 
     [HttpPost]
-    public async Task<GameSurrenderResponse> SurrenderGame([FromHeader] HeaderDTO header, GameSurrenderRequest request)
+    public async Task<SurrenderResponse> SurrenderGame([FromHeader] HeaderDTO header, SurrenderRequest request)
     {
-        GameSurrenderResponse response = new();
+        SurrenderResponse response = new();
         response.Result = await _gameService.SurrenderGame(header.Uid, request.room_id);
         _logger.ZLogInformation($"[GameSurrender] Uid : {header.Uid}, room_id : {request.room_id}");
         return response;

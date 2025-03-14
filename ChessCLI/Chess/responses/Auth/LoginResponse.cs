@@ -1,4 +1,4 @@
-using ChessCLI.Chess.DataLoad;
+using ChessCLI.Chess.Data;
 
 namespace ChessCLI.Chess.Responses.Auth;
 public class LoginResponse : ChessServerErrorCodeDTO

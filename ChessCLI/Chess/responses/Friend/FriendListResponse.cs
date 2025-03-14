@@ -6,5 +6,5 @@ using ChessCLI.Chess.Authentication;
 public class FriendListResponse : ChessServerErrorCodeDTO
 {
     // todo : use ChessUser class?
-    public IEnumerable<ChessUser> Friends { get; set; }
+    public IEnumerable<ChessUser> FriendList { get; set; }
 }

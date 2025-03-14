@@ -8,18 +8,18 @@ namespace APIServer.Controllers.Game;
 
 [ApiController]
 [Route("[controller]")]
-public class GamePlayController : ControllerBase
+public class MovePieceController : ControllerBase
 {
-    private readonly ILogger<GamePlayController> _logger;
+    private readonly ILogger<MovePieceController> _logger;
     private readonly IGameService _gameService;
 
-    public GamePlayController(ILogger<GamePlayController> logger, IGameService gameService)
+    public MovePieceController(ILogger<MovePieceController> logger, IGameService gameService)
     {
         _logger = logger;
         _gameService = gameService;
     }
 
-    [HttpPost("/movepiece")]
+    [HttpPost]
     public async Task<PieceMoveResponse> MovePiece([FromHeader] HeaderDTO header, PieceMoveRequest request)
     {
         PieceMoveResponse response = new();
@@ -28,13 +28,4 @@ public class GamePlayController : ControllerBase
         return response;
     }
 
-    [HttpPost("/waitTurn")]
-    public async Task<TurnWaitResponse> WaitTurn([FromHeader] HeaderDTO header, TurnWaitRequest request)
-    {
-        // long polling system
-        TurnWaitResponse response = new();
-        (response.Result, response.roomData) = await _gameService.WaitTurn(header.Uid, request.room_id);
-
-        return response;
-    }
 }

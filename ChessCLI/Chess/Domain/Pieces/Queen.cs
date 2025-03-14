@@ -1,4 +1,4 @@
-namespace APIServer.Domain.Pieces;
+namespace ChessCLI.Chess.Domain.Pieces;
 public class Queen : Piece
 {
     public Queen(int positionRow, int positionCol, Team team) : base(positionRow, positionCol, team)
