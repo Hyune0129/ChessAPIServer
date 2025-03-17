@@ -10,22 +10,22 @@
   - [ ] receive match
 
 - [ ] chess game
-  - [ ] init board
-  - [ ] move piece
-  - [ ] check
+  - [x] init board
+  - [x] move piece
+  - [x] check
     - [ ] checkmate
-  - [ ] reconnect
-  - [ ] surrender
+  - [x] reconnect
+  - [x] surrender
   - [ ] replay
   - [ ] chat
 
-- [ ] friend
-  - [ ] send friend request
-    - [ ] accept friend
-    - [ ] deny friend
-  - [ ] friend list
-    - [ ] friend info
-    - [ ] delete friend
+- [x] friend
+  - [x] send friend request
+    - [x] accept friend
+    - [x] deny friend
+  - [x] friend list
+    - [x] friend info
+    - [x] delete friend
  
 - [ ] friend match send
    
