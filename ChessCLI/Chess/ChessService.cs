@@ -49,7 +49,6 @@ public class ChessService
         HttpResponseMessage httpResponse = await _client.GetAsync("/Logout");
         LogoutResponse response = await httpResponse.Content.ReadFromJsonAsync<LogoutResponse>();
         return response.Result;
-
     }
 
 }

@@ -27,6 +27,7 @@ public class ChessGamePage
     public async Task StartGamePage()
     {
         Console.WriteLine("Game Started");
+        
         throw new NotImplementedException();
     }
 

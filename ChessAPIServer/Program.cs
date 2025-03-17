@@ -4,6 +4,8 @@ using APIServer.Repository.Interfaces;
 using APIServer.Services;
 using APIServer.Services.Friend;
 using APIServer.Services.Interfaces;
+using APIServer.Worker;
+using APIServer.Worker.Interface;
 using ZLogger;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,9 @@ builder.Services.AddTransient<IDataLoadService, DataLoadService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IFriendService, FriendService>();
 builder.Services.AddControllers();
+
+// worker
+builder.Services.AddSingleton<IMatchWorker, MatchWorker>();
 
 // domain
 builder.Services.AddSingleton<InitBoardMaker>();
@@ -50,7 +55,6 @@ app.UseRouting();
 
 app.MapDefaultControllerRoute();
 
-// todo : IMasterDb load
 
 
 app.Run(configuration["ServerAddress"]);

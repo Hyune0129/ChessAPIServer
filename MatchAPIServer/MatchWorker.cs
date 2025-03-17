@@ -182,5 +182,4 @@ public class MatchingConfig
     public string PubKey { get; set; }
     public string SubKey { get; set; }
     public string GameServerAddress { get; set; }
-    public string GameServerRequest { get; set; }
 }

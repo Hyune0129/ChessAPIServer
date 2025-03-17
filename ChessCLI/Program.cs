@@ -14,9 +14,29 @@ while (true)
 
 void init()
 {
+    IfNullSetDefaultEnviroment();
     sessionManager = new SessionManager();
     authService = new AuthService(sessionManager);
     authPage = new AuthPage(authService);
+}
+
+void IfNullSetDefaultEnviroment()
+{
+    string? login_url = Environment.GetEnvironmentVariable("AccountServerAddress");
+    string? chess_url = Environment.GetEnvironmentVariable("GameServerAddress");
+    string? match_url = Environment.GetEnvironmentVariable("MatchServerAddress");
+    if (login_url == null)
+    {
+        Environment.SetEnvironmentVariable("AccountServerAddress", "http://localhost:5073");
+    }
+    if (chess_url == null)
+    {
+        Environment.SetEnvironmentVariable("GameServerAddress", "http://localhost:5074");
+    }
+    if (match_url == null)
+    {
+        Environment.SetEnvironmentVariable("MatchServerAddress", "http://localhost:5075");
+    }
 }
 
 async void LoginMenu()

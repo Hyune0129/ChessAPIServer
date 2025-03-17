@@ -149,3 +149,11 @@ public enum ChessServerErrorCode : UInt16
 
     GetRewardFailException = 9004,
 }
+
+public enum MatchServerErrorCode : UInt16
+{
+    None = 0,
+    AuthCheckFail = 21,
+    ReceiptcheckFail = 22,
+    ProcessMatching = 23,
+}
